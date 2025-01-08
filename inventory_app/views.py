@@ -101,3 +101,14 @@ def create_sales_order(request):
     products = Product.objects.all()
     return render(request, "create_sales_order.html", {"products": products})
 
+def cancel_sales_order(request, order_id):
+    order = get_object_or_404(SalesOrder, id=order_id)
+    if order.status == "Pending":
+        order.status = "Cancelled"
+        order.save()
+
+        product = order.product
+        product.stock_quantity += order.quantity
+        product.save()
+    return redirect("list_sales_orders")
+
