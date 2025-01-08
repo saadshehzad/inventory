@@ -24,3 +24,18 @@ def list_products(request):
     products = Product.objects.all()
     return render(request, "list_products.html", {"products": products})
 
+def add_supplier(request):
+    if request.method == "POST":
+        name = request.POST["name"]
+        email = request.POST["email"]
+        phone = request.POST["phone"]
+        address = request.POST["address"]
+        
+        Supplier.objects.create(
+            name=name,
+            email=email,
+            phone=phone,
+            address=address
+        )
+        return redirect("list_suppliers")
+    return render(request, "add_supplier.html")
