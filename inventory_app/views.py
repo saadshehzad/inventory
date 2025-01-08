@@ -112,3 +112,10 @@ def cancel_sales_order(request, order_id):
         product.save()
     return redirect("list_sales_orders")
 
+def list_sales_orders(request):
+    orders = SalesOrder.objects.all()
+    return render(request, "list_sales_orders.html", {"orders": orders})
+
+def stock_level_check(request):
+    products = Product.objects.all()
+    return render(request, "stock_level.html", {"products": products})
