@@ -1,3 +1,8 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from .models import Supplier, Product, SalesOrder, StockMovement
+from datetime import date
+
 def add_product(request):
     if request.method == "POST":
         name = request.POST["name"]
@@ -71,3 +76,28 @@ def add_stock_movement(request):
         return redirect("list_products")
     products = Product.objects.all()
     return render(request, "add_stock_movement.html", {"products": products})
+
+def create_sales_order(request):
+    if request.method == "POST":
+        product_id = request.POST["product_id"]
+        quantity = int(request.POST["quantity"])
+        product = Product.objects.get(id=product_id)
+
+        if product.stock_quantity < quantity:
+            return JsonResponse({"error": "Insufficient stock"}, status=400)
+
+        total_price = product.price * quantity
+        SalesOrder.objects.create(
+            product=product,
+            quantity=quantity,
+            total_price=total_price,
+            sale_date=date.today(),
+            status="Pending"
+        )
+
+        product.stock_quantity -= quantity
+        product.save()
+        return redirect("list_sales_orders")
+    products = Product.objects.all()
+    return render(request, "create_sales_order.html", {"products": products})
+
