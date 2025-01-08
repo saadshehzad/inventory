@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .models import Supplier, Product, SalesOrder, StockMovement
 from datetime import date
+from decimal import Decimal
+from bson import Decimal128
+
 
 def add_product(request):
     if request.method == "POST":
@@ -105,11 +108,13 @@ def cancel_sales_order(request, order_id):
     order = get_object_or_404(SalesOrder, id=order_id)
     if order.status == "Pending":
         order.status = "Cancelled"
+        order.total_price = order.total_price.to_decimal()
         order.save()
 
         product = order.product
-        product.stock_quantity += order.quantity
+        order.total_price = Decimal(order.total_price)
         product.save()
+
     return redirect("list_sales_orders")
 
 def list_sales_orders(request):
