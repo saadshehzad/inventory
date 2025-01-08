@@ -43,3 +43,31 @@ def add_supplier(request):
 def list_suppliers(request):
     suppliers = Supplier.objects.all()
     return render(request, "list_suppliers.html", {"suppliers": suppliers})
+
+def add_stock_movement(request):
+    if request.method == "POST":
+        product_id = request.POST["product_id"]
+        quantity = int(request.POST["quantity"])
+        movement_type = request.POST["movement_type"]
+        notes = request.POST.get("notes", "")
+        product = Product.objects.get(id=product_id)
+
+        if movement_type == "In":
+            product.stock_quantity += quantity
+        elif movement_type == "Out" and product.stock_quantity >= quantity:
+            product.stock_quantity -= quantity
+        else:
+            return JsonResponse({"error": "Invalid stock movement"}, status=400)
+
+        product.save()
+        
+        StockMovement.objects.create(
+            product=product,
+            quantity=quantity,
+            movement_type=movement_type,
+            movement_date=date.today(),
+            notes=notes
+        )
+        return redirect("list_products")
+    products = Product.objects.all()
+    return render(request, "add_stock_movement.html", {"products": products})
