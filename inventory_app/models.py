@@ -7,3 +7,14 @@ class TimestampedModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class Supplier(TimestampedModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    address = models.TextField()
+
+    def __str__(self):
+        return self.name
