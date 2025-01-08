@@ -39,3 +39,7 @@ def add_supplier(request):
         )
         return redirect("list_suppliers")
     return render(request, "add_supplier.html")
+
+def list_suppliers(request):
+    suppliers = Supplier.objects.all()
+    return render(request, "list_suppliers.html", {"suppliers": suppliers})
