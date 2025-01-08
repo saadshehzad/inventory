@@ -46,3 +46,20 @@ class SalesOrder(TimestampedModel):
 
     def __str__(self):
         return f"Order - {self.product.name}"
+
+
+class StockMovement(TimestampedModel):
+    MOVEMENT_CHOICES = [
+        ('In', 'Incoming'),
+        ('Out', 'Outgoing'),
+    ]
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    movement_type = models.CharField(max_length=3, choices=MOVEMENT_CHOICES)
+    movement_date = models.DateField()
+    notes = models.TextField()
+
+
+    def __str__(self):
+        return f"{self.movement_type} - {self.product.name}"
