@@ -40,9 +40,9 @@ class SalesOrder(TimestampedModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-    total_price = DecimalField(max_digits=None, decimal_places=None)
+    total_price = models.DecimalField(max_digits=10, decimal_places=4)
     sale_date = models.DateField()
-    status = models.CharField(max_length=20, choices=MOVEMENT_CHOICES)
+    status = models.CharField(max_length=20, choices=SALES_STATUS)
 
     def __str__(self):
         return f"Order - {self.product.name}"
