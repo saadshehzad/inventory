@@ -18,3 +18,15 @@ class Supplier(TimestampedModel):
 
     def __str__(self):
         return self.name
+
+class Product(TimestampedModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    category = models.CharField(max_length=50)
+    price = models.FloatField()
+    stock_quantity = models.IntegerField(default=0)
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
