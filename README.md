@@ -25,3 +25,8 @@ Clone the repository to your local machine:
 ```bash
 git clone git@github.com:saadshehzad/inventory.git
 cd src
+python3 -m venv venv
+source venv/bin/activate
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver 0.0.0.0:8000
