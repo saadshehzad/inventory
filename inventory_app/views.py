@@ -19,3 +19,8 @@ def add_product(request):
         return redirect("list_products")
     suppliers = Supplier.objects.all()
     return render(request, "add_product.html", {"suppliers": suppliers})
+
+def list_products(request):
+    products = Product.objects.all()
+    return render(request, "list_products.html", {"products": products})
+
