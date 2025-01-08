@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
-from .models import Supplier, Product, SalesOrder, StockMovement
 from datetime import date
 from decimal import Decimal
+
 from bson import Decimal128
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .models import Product, SalesOrder, StockMovement, Supplier
 
 
 def add_product(request):
@@ -15,22 +17,24 @@ def add_product(request):
         stock_quantity = int(request.POST["stock_quantity"])
         supplier_id = request.POST["supplier_id"]
         supplier = Supplier.objects.get(id=supplier_id)
-        
+
         Product.objects.create(
             name=name,
             description=description,
             category=category,
             price=price,
             stock_quantity=stock_quantity,
-            supplier=supplier
+            supplier=supplier,
         )
         return redirect("list_products")
     suppliers = Supplier.objects.all()
     return render(request, "add_product.html", {"suppliers": suppliers})
 
+
 def list_products(request):
     products = Product.objects.all()
     return render(request, "list_products.html", {"products": products})
+
 
 def add_supplier(request):
     if request.method == "POST":
@@ -38,19 +42,16 @@ def add_supplier(request):
         email = request.POST["email"]
         phone = request.POST["phone"]
         address = request.POST["address"]
-        
-        Supplier.objects.create(
-            name=name,
-            email=email,
-            phone=phone,
-            address=address
-        )
+
+        Supplier.objects.create(name=name, email=email, phone=phone, address=address)
         return redirect("list_suppliers")
     return render(request, "add_supplier.html")
+
 
 def list_suppliers(request):
     suppliers = Supplier.objects.all()
     return render(request, "list_suppliers.html", {"suppliers": suppliers})
+
 
 def add_stock_movement(request):
     if request.method == "POST":
@@ -68,17 +69,18 @@ def add_stock_movement(request):
             return JsonResponse({"error": "Invalid stock movement"}, status=400)
 
         product.save()
-        
+
         StockMovement.objects.create(
             product=product,
             quantity=quantity,
             movement_type=movement_type,
             movement_date=date.today(),
-            notes=notes
+            notes=notes,
         )
         return redirect("list_products")
     products = Product.objects.all()
     return render(request, "add_stock_movement.html", {"products": products})
+
 
 def create_sales_order(request):
     if request.method == "POST":
@@ -95,7 +97,7 @@ def create_sales_order(request):
             quantity=quantity,
             total_price=total_price,
             sale_date=date.today(),
-            status="Pending"
+            status="Pending",
         )
 
         product.stock_quantity -= quantity
@@ -103,6 +105,7 @@ def create_sales_order(request):
         return redirect("list_sales_orders")
     products = Product.objects.all()
     return render(request, "create_sales_order.html", {"products": products})
+
 
 def cancel_sales_order(request, order_id):
     order = get_object_or_404(SalesOrder, id=order_id)
@@ -117,9 +120,11 @@ def cancel_sales_order(request, order_id):
 
     return redirect("list_sales_orders")
 
+
 def list_sales_orders(request):
     orders = SalesOrder.objects.all()
     return render(request, "list_sales_orders.html", {"orders": orders})
+
 
 def stock_level_check(request):
     products = Product.objects.all()

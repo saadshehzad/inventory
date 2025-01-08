@@ -1,5 +1,7 @@
-from djongo import models
 from uuid import uuid4
+
+from djongo import models
+
 
 class TimestampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -19,6 +21,7 @@ class Supplier(TimestampedModel):
     def __str__(self):
         return self.name
 
+
 class Product(TimestampedModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=255)
@@ -31,11 +34,12 @@ class Product(TimestampedModel):
     def __str__(self):
         return self.name
 
+
 class SalesOrder(TimestampedModel):
     SALES_STATUS = [
-        ('Pending', 'Pending'),
-        ('Completed', 'Completed'),
-        ('Cancelled', 'Cancelled'),
+        ("Pending", "Pending"),
+        ("Completed", "Completed"),
+        ("Cancelled", "Cancelled"),
     ]
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -50,8 +54,8 @@ class SalesOrder(TimestampedModel):
 
 class StockMovement(TimestampedModel):
     MOVEMENT_CHOICES = [
-        ('In', 'Incoming'),
-        ('Out', 'Outgoing'),
+        ("In", "Incoming"),
+        ("Out", "Outgoing"),
     ]
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -59,7 +63,6 @@ class StockMovement(TimestampedModel):
     movement_type = models.CharField(max_length=3, choices=MOVEMENT_CHOICES)
     movement_date = models.DateField()
     notes = models.TextField()
-
 
     def __str__(self):
         return f"{self.movement_type} - {self.product.name}"
